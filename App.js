@@ -1,17 +1,14 @@
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import Home from "./screen/home";
 import Login from "./screen/login";
-// import Register from "./screen/register";
+import Register from "./screen/register";
 import { useState } from "react";
 import React from "react";
-import {
-  StyleSheet,  
-  View,
-  ImageBackground, 
-  Alert,
-  TouchableWithoutFeedback,
-  Keyboard,  
-} from "react-native";
 import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
+
+const Auth = createStackNavigator();
 
 export default function App() {
   const loadFonts = async () => {
@@ -21,24 +18,7 @@ export default function App() {
       "Roboto-Medium": require("./fonts/Roboto-Medium.ttf"),
     });
   };
-
-  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isReady, setIsReady] = useState(false);
-  const nameHandler = (text) => setName(text);
-  const emailHandler = (text) => setEmail(text);
-  const passwordHandler = (text) => setPassword(text);
-
-  const keyboardHide = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
-  };
-  const onLogin = () => {
-    Alert.alert("Credentials", `${name} +${email}+ ${password}`);
-  };
-
   if (!isReady) {
     return (
       <AppLoading
@@ -48,30 +28,26 @@ export default function App() {
       />
     );
   }
-  return (
-    <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View style={styles.container}>
-        <ImageBackground
-          style={styles.imgBG}
-          source={require("./images/PhotoBG.jpg")}
-        > 
-        {/* <Register/> */}
-        <Login/> 
-         
-        </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
-  );
+  return ( 
+   <NavigationContainer>
+      <Auth.Navigator>
+        <Auth.Screen
+          options={{ headerShown: false }}
+          name="Login"
+          component={Login}
+        />
+        <Auth.Screen
+          options={{ headerShown: false }}
+          name="Registration"
+          component={Register}
+        />
+        <Auth.Screen
+          options={{ headerShown: false }}
+          name="Home"
+          component={Home}
+        />
+      </Auth.Navigator>
+    </NavigationContainer>
+   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  imgBG: {
-    flex: 1,
-    resizeMode: "cover",
-    justifyContent: "flex-end",
-  },
-
-});
+;

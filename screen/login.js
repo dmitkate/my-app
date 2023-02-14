@@ -5,33 +5,27 @@ import {
   StyleSheet,
   Text,
   View,
-
+  TouchableWithoutFeedback,
   TextInput,
   TouchableOpacity,
   Alert,
   KeyboardAvoidingView,
   Platform,
-
+  
+  ImageBackground, 
   Keyboard,
   Image, 
 } from "react-native";
-import * as Font from "expo-font";
-import AppLoading from "expo-app-loading";
 
-export default function Login() {
-  const loadFonts = async () => {
-    await Font.loadAsync({
-      "Roboto-Regular": require("../fonts/Roboto-Regular.ttf"),
-      "Roboto-Bold": require("../fonts/Roboto-Bold.ttf"),
-      "Roboto-Medium": require("../fonts/Roboto-Medium.ttf"),
-    });
-  };
+
+export default function Login({navigation}) {
+  
 
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isReady, setIsReady] = useState(false);
+  const [showPass, setShowPass] = useState(true);
   const nameHandler = (text) => setName(text);
   const emailHandler = (text) => setEmail(text);
   const passwordHandler = (text) => setPassword(text);
@@ -42,26 +36,22 @@ export default function Login() {
   };
   const onLogin = () => {
     Alert.alert("Credentials", `${name} +${email}+ ${password}`);
+    navigation.navigate("Home");
   };
 
-  if (!isReady) {
-    return (
-      <AppLoading
-        startAsync={loadFonts}
-        onFinish={() => setIsReady(true)}
-        onError={console.warn}
-      />
-    );
-  }
-  return (  
-          <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+  
+  return (<TouchableWithoutFeedback onPress={keyboardHide}>
+      <View style={styles.container}>
+        <ImageBackground
+          style={styles.imgBG}
+          source={require("../images/PhotoBG.jpg")}
+        > 
+     <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : "heig"}
           >
-            <View style={styles.whiteContainer}>
-            
+            <View style={styles.whiteContainer}>    
 
-              <Text style={styles.title}>Войти</Text>
-             
+              <Text style={styles.title}>Войти</Text>             
               <TextInput
                 onChangeText={emailHandler}
                 style={styles.input}
@@ -70,14 +60,19 @@ export default function Login() {
               <TextInput
                 onChangeText={passwordHandler}
                 style={styles.input}
-                secureTextEntry={true}
+                
+                secureTextEntry={showPass}
                 placeholder="Пароль"
                 />
-              <TouchableOpacity
+                <TouchableOpacity
                 style={styles.btnShowPswrd}
-                onPress={onLogin}
-                >
-                  <Text style={styles.showPswrd}>Показать</Text>
+                activeOpacity={0.7}
+                onPressIn={() => setShowPass(false)}
+                onPressOut={() => setShowPass(true)}
+              >
+                <Text style={styles.showPswrd}
+                  activeOpacity={0.7}
+                >Показать</Text>
               </TouchableOpacity>
               </View>
               <TouchableOpacity
@@ -88,15 +83,34 @@ export default function Login() {
               <Text style={styles.buttonText}>Войти</Text>
               </TouchableOpacity>
                 
-              
+               <TouchableOpacity
+                onPress={() => navigation.navigate("Registration")}
+                activeOpacity={0.7}
+                
+              >
               <Text style={styles.text}>Нет аккаунта? Зарегистрироваться</Text>
+            </TouchableOpacity>
+              
             </View>
           </KeyboardAvoidingView>
+         
+        </ImageBackground>
+      </View>
+    </TouchableWithoutFeedback>
+         
    
   );
 }
 
 const styles = StyleSheet.create({
+   container: {
+    flex: 1,
+  },
+  imgBG: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "flex-end",
+  },
   whiteContainer:{
   alignSelf: "stretch",
   borderTopRightRadius: 25,
@@ -105,44 +119,7 @@ const styles = StyleSheet.create({
   paddingTop: 32,
   paddingBottom: 111,
   backgroundColor: "#ffffff",
- },
-  photoContainer: {
-    position: "absolute",
-    top: -60,
-    left: "50%",
-    transform: [{translateX:"-50%"}],
-  },
-  photo: {    
-    backgroundColor: "#F6F6F6",
-    borderRadius: 16,
-    width: 120,
-    height: 120,
-  },
-  btnAdd: {
-    zIndex:3,
-    position: "absolute",
-    left: '100%',
-    top: 81,
-    transform: [{ "translateX": "-50%" }],
-    width: 25,
-    height: 25,
-    borderColor: '#FF6C00',
-    borderWidth: 1,
-    borderRadius: '50%',
-    textAlign: 'center'
-  },
-  btnAddText:
-  {
-    position: "absolute",
-    left: '50%',
-    top: '50%',
-    transform: [{ "translateX": "-50%" }, { "translateY": "-50%" }],
-    width: 13,
-    height: 13,
-    justifyContent: 'center',
-    alignItems: 'center',
-    color: '#FF6C00'
-  },
+ },   
   title: {
     marginBottom: 33,
     textAlign: "center",
@@ -156,7 +133,6 @@ const styles = StyleSheet.create({
   input: {
     flexDirection: "row",
     width: "100%",
-
     fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
@@ -173,7 +149,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top:'25%',
     left: '100%',
-    transform: [{translateX:"-120%"}],
+    transform: [{translateX:-86}],
   },
   showPswrd: {
     color: '#1B4371',
@@ -207,4 +183,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
   },
+ 
 });
